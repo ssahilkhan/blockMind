@@ -1,5 +1,5 @@
 import { ethers } from 'ethers';
-import { IChainProvider } from '../provider/provider.interface';
+import { IChainProvider, EstimateGasParams } from '../provider/provider.interface';
 import { CacheService } from '../cache/cache.service';
 import { blockMapper } from '../mapper/block.mapper';
 import { transactionMapper } from '../mapper/transaction.mapper';
@@ -149,6 +149,18 @@ export class ChainService {
 
   async getTransactionCount(address: string): Promise<number> {
     return this.provider.getTransactionCount(address);
+  }
+
+  async estimateGas(params: EstimateGasParams): Promise<bigint> {
+    return this.provider.estimateGas(params);
+  }
+
+  async sendTransaction(signedTx: string): Promise<string> {
+    return this.provider.sendTransaction(signedTx);
+  }
+
+  async call(params: { to: string; data: string }): Promise<string> {
+    return this.provider.call(params);
   }
 
   async search(query: string): Promise<SearchResult> {

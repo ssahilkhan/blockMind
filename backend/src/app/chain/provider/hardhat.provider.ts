@@ -1,5 +1,5 @@
 import { ethers } from 'ethers';
-import { IChainProvider } from './provider.interface';
+import { IChainProvider, EstimateGasParams } from './provider.interface';
 import {
   RawBlock,
   RawTransaction,
@@ -100,7 +100,8 @@ export class HardhatProvider implements IChainProvider {
   }
 
   async getTransactionCount(address: string): Promise<number> {
-    return this.provider.getTransactionCount(address);
+    const result = await this.provider.send('eth_getTransactionCount', [address, 'latest']);
+    return parseInt(result, 16);
   }
 
   async getBlockNumber(): Promise<number> {
@@ -110,6 +111,27 @@ export class HardhatProvider implements IChainProvider {
   async getGasPrice(): Promise<bigint> {
     const fee = await this.provider.getFeeData();
     return fee.gasPrice ?? 0n;
+  }
+
+  async estimateGas(params: EstimateGasParams): Promise<bigint> {
+    return this.provider.estimateGas({
+      from: params.from,
+      to: params.to,
+      value: params.value,
+      data: params.data,
+    });
+  }
+
+  async sendTransaction(signedTx: string): Promise<string> {
+    const txResponse = await this.provider.broadcastTransaction(signedTx);
+    return txResponse.hash;
+  }
+
+  async call(params: { to: string; data: string }): Promise<string> {
+    return this.provider.call({
+      to: params.to,
+      data: params.data,
+    });
   }
 
   async getNetwork(): Promise<{ chainId: number; name: string }> {

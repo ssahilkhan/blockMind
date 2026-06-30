@@ -8,6 +8,9 @@ import { blockchainRouter } from './app/blockchain/blockchain.controller';
 import { requestLogger } from './app/middleware/request-logger';
 import { errorHandler } from './app/middleware/error-handler';
 import { walletRouter } from './app/wallet/wallet.routes';
+import { transactionRouter } from './app/transaction/transaction.routes';
+import { contractRouter } from './app/contract/routes/contract.routes';
+import { tokenRouter } from './app/token/routes/token.routes';
 import { networkManager } from './app/network/network.manager';
 import { HardhatProvider } from './app/chain/provider/hardhat.provider';
 import { CacheService } from './app/chain/cache/cache.service';
@@ -31,6 +34,9 @@ app.get('/', (_req: Request, res: Response) => {
 app.use('/health', healthRouter);
 app.use('/blockchain', blockchainRouter);
 app.use('/wallet', walletRouter);
+app.use('/transaction', transactionRouter);
+app.use('/contract', contractRouter);
+app.use('/token', tokenRouter);
 
 app.use(errorHandler);
 

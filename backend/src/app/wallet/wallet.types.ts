@@ -49,3 +49,20 @@ export interface VerificationResult {
   valid: boolean;
   recoveredAddress: string;
 }
+
+export interface SignTransactionParams {
+  to?: string;
+  value?: string;
+  data?: string;
+  nonce?: number;
+  gasLimit?: string;
+  gasPrice?: string;
+  maxFeePerGas?: string;
+  maxPriorityFeePerGas?: string;
+  chainId?: number;
+}
+
+export interface SignedTransaction {
+  signedTx: string;
+  txHash: string;
+}

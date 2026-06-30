@@ -8,6 +8,8 @@ import {
   WalletDetails,
   BalanceResult,
   VerificationResult,
+  SignTransactionParams,
+  SignedTransaction,
 } from './wallet.types';
 import { DEFAULT_DERIVATION_PATH } from './wallet.constants';
 
@@ -108,5 +110,29 @@ export const walletService = {
       valid: ethers.isAddress(recoveredAddress),
       recoveredAddress,
     };
+  },
+
+  async signTransaction(privateKey: string, params: SignTransactionParams): Promise<SignedTransaction> {
+    const wallet = new ethers.Wallet(privateKey);
+
+    const txRequest: ethers.TransactionRequest = {};
+
+    if (params.to) txRequest.to = params.to;
+    if (params.value) txRequest.value = ethers.parseEther(params.value);
+    if (params.data) txRequest.data = params.data;
+    if (params.nonce !== undefined) txRequest.nonce = params.nonce;
+    if (params.gasLimit) txRequest.gasLimit = ethers.toBigInt(params.gasLimit);
+    if (params.gasPrice) txRequest.gasPrice = ethers.parseUnits(params.gasPrice, 'gwei');
+    if (params.maxFeePerGas) txRequest.maxFeePerGas = ethers.parseUnits(params.maxFeePerGas, 'gwei');
+    if (params.maxPriorityFeePerGas) txRequest.maxPriorityFeePerGas = ethers.parseUnits(params.maxPriorityFeePerGas, 'gwei');
+    if (params.chainId) txRequest.chainId = params.chainId;
+    if (!params.to && !params.data) {
+      txRequest.data = '0x';
+    }
+
+    const signedTx = await wallet.signTransaction(txRequest);
+    const txHash = ethers.keccak256(signedTx);
+
+    return { signedTx, txHash };
   },
 };
