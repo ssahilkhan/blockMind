@@ -11,6 +11,10 @@ import { walletRouter } from './app/wallet/wallet.routes';
 import { transactionRouter } from './app/transaction/transaction.routes';
 import { contractRouter } from './app/contract/routes/contract.routes';
 import { tokenRouter } from './app/token/routes/token.routes';
+import { eventRouter } from './app/events/routes/event.routes';
+import { portfolioRouter } from './app/portfolio/routes/portfolio.routes';
+import { createIndexerRouter } from './app/indexer/routes/indexer.routes';
+import { IndexerService } from './app/indexer/service/indexer.service';
 import { networkManager } from './app/network/network.manager';
 import { HardhatProvider } from './app/chain/provider/hardhat.provider';
 import { CacheService } from './app/chain/cache/cache.service';
@@ -37,6 +41,11 @@ app.use('/wallet', walletRouter);
 app.use('/transaction', transactionRouter);
 app.use('/contract', contractRouter);
 app.use('/token', tokenRouter);
+app.use('/events', eventRouter);
+app.use('/portfolio', portfolioRouter);
+
+const indexerService = new IndexerService();
+app.use('/indexer', createIndexerRouter(indexerService));
 
 app.use(errorHandler);
 
