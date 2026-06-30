@@ -54,9 +54,11 @@ contract TestERC20 {
 
 describeIf('Event Integration Tests', () => {
   let erc20Address: string;
+  let provider: HardhatProvider;
+  let rawProvider: ethers.JsonRpcProvider;
 
   beforeAll(async () => {
-    const provider = new HardhatProvider(RPC_URL);
+    provider = new HardhatProvider(RPC_URL);
     const cache = new CacheService();
     await provider.connect();
     initChainService(provider, cache);
@@ -73,7 +75,14 @@ describeIf('Event Integration Tests', () => {
       privateKey: HARDHAT_ACCOUNT_PRIVATE_KEY,
     });
     erc20Address = deployResult.contractAddress;
+
+    rawProvider = new ethers.JsonRpcProvider(RPC_URL);
   }, 30000);
+
+  afterAll(async () => {
+    rawProvider.destroy();
+    await provider.disconnect();
+  });
 
   it('should register and decode events from a receipt', async () => {
     const chain = getChainService();

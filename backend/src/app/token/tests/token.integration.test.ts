@@ -157,12 +157,17 @@ describeIf('Token Integration', () => {
   let erc1155Address: string;
   let erc1155ABI: unknown[];
   let mintedTokenId: string;
+  let provider: HardhatProvider;
 
   beforeAll(async () => {
-    const provider = new HardhatProvider(RPC_URL);
+    provider = new HardhatProvider(RPC_URL);
     await provider.connect();
     const cache = new CacheService();
     initChainService(provider, cache);
+  });
+
+  afterAll(async () => {
+    await provider.disconnect();
   });
 
   it('should compile and deploy ERC20', async () => {

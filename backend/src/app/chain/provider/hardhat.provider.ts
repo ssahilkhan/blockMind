@@ -138,4 +138,10 @@ export class HardhatProvider implements IChainProvider {
     const network = await this.provider.getNetwork();
     return { chainId: Number(network.chainId), name: network.name || 'unknown' };
   }
+
+  async disconnect(): Promise<void> {
+    this.provider.destroy();
+    this.connected = false;
+    logger.info('HardhatProvider disconnected');
+  }
 }

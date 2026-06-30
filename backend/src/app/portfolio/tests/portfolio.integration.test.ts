@@ -52,9 +52,11 @@ contract TestERC20 {
 
 describeIf('Portfolio Integration Tests', () => {
   let erc20Address: string;
+  let provider: HardhatProvider;
+  let rawProvider: ethers.JsonRpcProvider;
 
   beforeAll(async () => {
-    const provider = new HardhatProvider(RPC_URL);
+    provider = new HardhatProvider(RPC_URL);
     const cache = new CacheService();
     await provider.connect();
     initChainService(provider, cache);
@@ -71,10 +73,16 @@ describeIf('Portfolio Integration Tests', () => {
     });
     erc20Address = deployResult.contractAddress;
 
-    const wallet = new ethers.Wallet(HARDHAT_KEY, new ethers.JsonRpcProvider(RPC_URL));
+    rawProvider = new ethers.JsonRpcProvider(RPC_URL);
+    const wallet = new ethers.Wallet(HARDHAT_KEY, rawProvider);
     const erc20 = new ethers.Contract(erc20Address, ['function transfer(address to, uint256 amount) returns (bool)'], wallet);
     await (await erc20.transfer(SECOND_ACCOUNT, 500)).wait();
   }, 30000);
+
+  afterAll(async () => {
+    rawProvider.destroy();
+    await provider.disconnect();
+  });
 
   it('should get native ETH balance', async () => {
     const assets = await assetAggregator.aggregate(HARDHAT_ACCOUNT);

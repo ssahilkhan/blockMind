@@ -46,10 +46,11 @@ contract TestERC20 {
 
 describeIf('Indexer Integration Tests', () => {
   let indexer: IndexerService;
+  let hhProvider: HardhatProvider;
   let provider: ethers.JsonRpcProvider;
 
   beforeAll(async () => {
-    const hhProvider = new HardhatProvider(RPC_URL);
+    hhProvider = new HardhatProvider(RPC_URL);
     const cache = new CacheService();
     await hhProvider.connect();
     initChainService(hhProvider, cache);
@@ -74,6 +75,11 @@ describeIf('Indexer Integration Tests', () => {
     );
     await (await erc20.transfer('0x70997970C51812dc3A010C7d01b50e0d17dc79C8', 500)).wait();
   }, 60000);
+
+  afterAll(async () => {
+    provider.destroy();
+    await hhProvider.disconnect();
+  });
 
   beforeEach(() => {
     indexer = new IndexerService();

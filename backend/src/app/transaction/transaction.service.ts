@@ -67,23 +67,23 @@ export const transactionService = {
       }
     }
 
-    if (txParams.gasLimit === undefined && !txParams.to && !txParams.data) {
-      txParams.gasLimit = '21000';
-    }
-
     if (txParams.gasLimit === undefined) {
-      try {
-        const estimateParams: { from: string; to?: string; value?: bigint; data?: string } = {
-          from: new ethers.Wallet(privateKey).address,
-        };
-        if (txParams.to) estimateParams.to = txParams.to;
-        if (txParams.value) estimateParams.value = ethers.parseEther(txParams.value);
-        if (txParams.data) estimateParams.data = txParams.data;
-        const estimated = await chain.estimateGas(estimateParams);
-        txParams.gasLimit = estimated.toString();
-      } catch (err) {
-        logger.warn('Gas estimation failed, using default gas limit', { error: (err as Error).message });
+      if (!txParams.to && !txParams.data) {
         txParams.gasLimit = '21000';
+      } else {
+        try {
+          const estimateParams: { from: string; to?: string; value?: bigint; data?: string } = {
+            from: new ethers.Wallet(privateKey).address,
+          };
+          if (txParams.to) estimateParams.to = txParams.to;
+          if (txParams.value) estimateParams.value = ethers.parseEther(txParams.value);
+          if (txParams.data) estimateParams.data = txParams.data;
+          const estimated = await chain.estimateGas(estimateParams);
+          txParams.gasLimit = estimated.toString();
+        } catch (err) {
+          logger.warn('Gas estimation failed, using default gas limit', { error: (err as Error).message });
+          txParams.gasLimit = '3000000';
+        }
       }
     }
 

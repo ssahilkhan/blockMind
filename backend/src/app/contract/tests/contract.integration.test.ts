@@ -61,12 +61,17 @@ describeIf('Contract Integration', () => {
   };
   let contractAddress: string;
   let abi: unknown[];
+  let provider: HardhatProvider;
 
   beforeAll(async () => {
-    const provider = new HardhatProvider(RPC_URL);
+    provider = new HardhatProvider(RPC_URL);
     await provider.connect();
     const cache = new CacheService();
     initChainService(provider, cache);
+  });
+
+  afterAll(async () => {
+    await provider.disconnect();
   });
 
   it('should compile the Counter contract', () => {
