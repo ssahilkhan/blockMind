@@ -1,0 +1,51 @@
+services:
+  postgres:
+    image: postgres:16-alpine
+    environment:
+      POSTGRES_USER: blockmind
+      POSTGRES_PASSWORD: blockmind
+      POSTGRES_DB: blockmind
+    ports:
+      - "5432:5432"
+    volumes:
+      - postgres_data:/var/lib/postgresql/data
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U blockmind"]
+      interval: 5s
+      timeout: 5s
+      retries: 5
+
+  hardhat:
+    build: ./blockchain
+    ports:
+      - "8545:8545"
+    healthcheck:
+      test: ["CMD-SHELL", "wget -qO- http://localhost:8545 --post-data='{\"jsonrpc\":\"2.0\",\"method\":\"eth_blockNumber\",\"params\":[],\"id\":1}' --header=Content-Type:application/json 2>/dev/null | grep -q result"]
+      interval: 10s
+      timeout: 5s
+      retries: 10
+      start_period: 15s
+
+  backend:
+    build: ./backend
+    ports:
+      - "3000:3000"
+    environment:
+      RPC_URL: http://hardhat:8545
+      PORT: 3000
+      DATABASE_URL: postgresql://blockmind:blockmind@postgres:5432/blockmind
+      NODE_ENV: development
+      LOG_LEVEL: debug
+    depends_on:
+      postgres:
+        condition: service_healthy
+    restart: unless-stopped
+    healthcheck:
+      test: ["CMD", "wget", "--no-verbose", "--timeout=3", "--tries=1", "-O-", "http://localhost:3000/"]
+      interval: 15s
+      timeout: 5s
+      retries: 3
+      start_period: 10s
+
+volumes:
+  postgres_data:

@@ -1,0 +1,11 @@
+{
+  "name": "blockmind-local-chain",
+  "version": "0.1.0",
+  "private": true,
+  "scripts": {
+    "node": "hardhat node"
+  },
+  "dependencies": {
+    "hardhat": "^2.22.0"
+  }
+}
