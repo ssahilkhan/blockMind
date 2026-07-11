@@ -2,8 +2,8 @@
 
 import { cn } from "@/lib/utils";
 import { useAppStore } from "@/stores/app-store";
-import { useHealthPolling, useNetworkStatus } from "@/hooks/use-network-health";
-import { Badge } from "@/components/ui/badge";
+import { useHealthPolling } from "@/hooks/use-network-health";
+import { NetworkSelector } from "@/features/multi-chain";
 
 function HealthIndicator({ status }: { status: string }) {
   const color =
@@ -21,26 +21,6 @@ function HealthIndicator({ status }: { status: string }) {
   );
 }
 
-function NetworkBadge() {
-  const { data, isLoading, isError } = useNetworkStatus();
-  const network = useAppStore((s) => s.currentNetwork);
-
-  if (isLoading) {
-    return <Badge variant="outline">Loading...</Badge>;
-  }
-
-  if (isError || !network) {
-    return <Badge variant="destructive">Disconnected</Badge>;
-  }
-
-  return (
-    <Badge variant="outline" className="gap-1.5">
-      <span className="font-mono text-xs">{network.name}</span>
-      <span className="text-muted-foreground">#{network.chainId}</span>
-    </Badge>
-  );
-}
-
 export function TopNav() {
   const { data: healthData, isLoading: healthLoading } = useHealthPolling();
 
@@ -51,7 +31,7 @@ export function TopNav() {
       </div>
 
       <div className="flex items-center gap-4">
-        <NetworkBadge />
+        <NetworkSelector />
 
         <div className="flex items-center">
           {healthLoading ? (

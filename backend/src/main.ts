@@ -15,11 +15,12 @@ import { eventRouter } from './app/events/routes/event.routes';
 import { portfolioRouter } from './app/portfolio/routes/portfolio.routes';
 import { createIndexerRouter } from './app/indexer/routes/indexer.routes';
 import { IndexerService } from './app/indexer/service/indexer.service';
-import { networkManager } from './app/network/network.manager';
+import { networkManager } from './app/network/network-manager';
 import { HardhatProvider } from './app/chain/provider/hardhat.provider';
 import { CacheService } from './app/chain/cache/cache.service';
 import { initChainService } from './app/chain/services/chain.service';
 import { createChainRouter } from './app/chain/controller/chain.controller';
+import { createNetworkRouter } from './app/network/routes/network.routes';
 
 const app = express();
 
@@ -43,6 +44,7 @@ app.use('/contract', contractRouter);
 app.use('/token', tokenRouter);
 app.use('/events', eventRouter);
 app.use('/portfolio', portfolioRouter);
+app.use('/network', createNetworkRouter());
 
 const indexerService = new IndexerService();
 app.use('/indexer', createIndexerRouter(indexerService));
@@ -50,21 +52,20 @@ app.use('/indexer', createIndexerRouter(indexerService));
 app.use(errorHandler);
 
 async function start(): Promise<void> {
-  networkManager.register({
-    name: 'hardhat',
-    chainId: 31337,
-    rpcUrl: config.RPC_URL,
-    currency: 'ETH',
-  });
+  await networkManager.registerAllEnabled();
+  networkManager.startHealthMonitoring();
 
-  const provider = new HardhatProvider(config.RPC_URL);
+  const defaultChainId = networkManager.getDefaultChainId();
+  const rpcUrl = networkManager.getConfig(defaultChainId).rpcConfig.rpcUrls[0];
+
+  const provider = new HardhatProvider(rpcUrl);
   const cache = new CacheService();
 
   try {
     await provider.connect();
     logger.info('Chain provider connected');
   } catch {
-    logger.warn('Chain provider connection failed on startup', { rpc: config.RPC_URL });
+    logger.warn('Chain provider connection failed on startup', { rpc: rpcUrl });
   }
 
   const chainService = initChainService(provider, cache);
@@ -74,7 +75,7 @@ async function start(): Promise<void> {
     await blockchainService.connect();
   } catch {
     logger.warn('Blockchain connection failed on startup. Health checks will report degraded.', {
-      rpc: config.RPC_URL,
+      rpc: rpcUrl,
     });
   }
 

@@ -6,15 +6,17 @@ export type SidebarItem = {
   icon: string;
 };
 
+export type CurrentNetwork = {
+  chainId: number;
+  name: string;
+  currency: string;
+} | null;
+
 export type AppState = {
-  currentNetwork: {
-    chainId: number;
-    name: string;
-    currency: string;
-  } | null;
+  currentNetwork: CurrentNetwork;
   backendHealth: HealthStatus;
   sidebarCollapsed: boolean;
-  setCurrentNetwork: (network: AppState["currentNetwork"]) => void;
+  setCurrentNetwork: (network: CurrentNetwork) => void;
   setBackendHealth: (health: HealthStatus) => void;
   toggleSidebar: () => void;
 };

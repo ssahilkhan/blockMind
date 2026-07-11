@@ -17,6 +17,7 @@ import {
   Brain,
   ShieldCheck,
   Bot,
+  Globe,
 } from "lucide-react";
 import type { LucideIcon } from "lucide-react";
 import { cn } from "@/lib/utils";
@@ -47,6 +48,7 @@ const NAV_ITEMS: NavItemData[] = [
   { label: "AI Assistant", href: "/ai", icon: Brain },
   { label: "Copilot", href: "/copilot", icon: Bot },
   { label: "Security", href: "/security", icon: ShieldCheck },
+  { label: "Networks", href: "/networks", icon: Globe },
 ];
 
 const BOTTOM_ITEMS: NavItemData[] = [

@@ -9,14 +9,23 @@ import {
   validateSearchQuery,
 } from '../validators';
 
+function parseChainId(req: Request): number | undefined {
+  const network = req.query.network as string | undefined;
+  if (network && /^\d+$/.test(network)) {
+    return parseInt(network, 10);
+  }
+  return undefined;
+}
+
 export function createChainRouter(chainService: ChainService): Router {
   const router = Router();
 
   router.get(
     '/block/latest',
-    async (_req: Request, res: Response, next: NextFunction) => {
+    async (req: Request, res: Response, next: NextFunction) => {
       try {
-        const block = await chainService.getLatestBlock();
+        const chainId = parseChainId(req);
+        const block = await chainService.getLatestBlock(chainId);
         res.json(block);
       } catch (err) {
         next(err);
@@ -31,7 +40,8 @@ export function createChainRouter(chainService: ChainService): Router {
         const error = validateBlockNumber(req.params.number);
         if (error) throw new AppError(400, 'VALIDATION_ERROR', error);
 
-        const block = await chainService.getBlockByNumber(Number(req.params.number));
+        const chainId = parseChainId(req);
+        const block = await chainService.getBlockByNumber(Number(req.params.number), chainId);
         if (!block) {
           throw new AppError(404, 'NOT_FOUND', `Block ${req.params.number} not found`);
         }
@@ -49,7 +59,8 @@ export function createChainRouter(chainService: ChainService): Router {
         const error = validateBlockHash(req.params.hash);
         if (error) throw new AppError(400, 'VALIDATION_ERROR', error);
 
-        const block = await chainService.getBlockByHash(req.params.hash);
+        const chainId = parseChainId(req);
+        const block = await chainService.getBlockByHash(req.params.hash, chainId);
         if (!block) {
           throw new AppError(404, 'NOT_FOUND', 'Block not found');
         }
@@ -68,7 +79,8 @@ export function createChainRouter(chainService: ChainService): Router {
         if (error) throw new AppError(400, 'VALIDATION_ERROR', error);
 
         const limit = req.query.limit ? Number(req.query.limit) : 10;
-        const blocks = await chainService.getLatestBlocks(limit);
+        const chainId = parseChainId(req);
+        const blocks = await chainService.getLatestBlocks(limit, chainId);
         res.json(blocks);
       } catch (err) {
         next(err);
@@ -83,7 +95,8 @@ export function createChainRouter(chainService: ChainService): Router {
         const error = validateTransactionHash(req.params.hash);
         if (error) throw new AppError(400, 'VALIDATION_ERROR', error);
 
-        const tx = await chainService.getTransaction(req.params.hash);
+        const chainId = parseChainId(req);
+        const tx = await chainService.getTransaction(req.params.hash, chainId);
         if (!tx) {
           throw new AppError(404, 'NOT_FOUND', 'Transaction not found');
         }
@@ -101,7 +114,8 @@ export function createChainRouter(chainService: ChainService): Router {
         const error = validateTransactionHash(req.params.hash);
         if (error) throw new AppError(400, 'VALIDATION_ERROR', error);
 
-        const receipt = await chainService.getReceipt(req.params.hash);
+        const chainId = parseChainId(req);
+        const receipt = await chainService.getReceipt(req.params.hash, chainId);
         if (!receipt) {
           throw new AppError(404, 'NOT_FOUND', 'Receipt not found');
         }
@@ -114,9 +128,10 @@ export function createChainRouter(chainService: ChainService): Router {
 
   router.get(
     '/network',
-    async (_req: Request, res: Response, next: NextFunction) => {
+    async (req: Request, res: Response, next: NextFunction) => {
       try {
-        const network = await chainService.getNetwork();
+        const chainId = parseChainId(req);
+        const network = await chainService.getNetwork(chainId);
         res.json(network);
       } catch (err) {
         next(err);
@@ -126,9 +141,10 @@ export function createChainRouter(chainService: ChainService): Router {
 
   router.get(
     '/gas',
-    async (_req: Request, res: Response, next: NextFunction) => {
+    async (req: Request, res: Response, next: NextFunction) => {
       try {
-        const gas = await chainService.getGasPrice();
+        const chainId = parseChainId(req);
+        const gas = await chainService.getGasPrice(chainId);
         res.json(gas);
       } catch (err) {
         next(err);
@@ -138,9 +154,10 @@ export function createChainRouter(chainService: ChainService): Router {
 
   router.get(
     '/stats',
-    async (_req: Request, res: Response, next: NextFunction) => {
+    async (req: Request, res: Response, next: NextFunction) => {
       try {
-        const stats = await chainService.getStats();
+        const chainId = parseChainId(req);
+        const stats = await chainService.getStats(chainId);
         res.json(stats);
       } catch (err) {
         next(err);
@@ -156,7 +173,8 @@ export function createChainRouter(chainService: ChainService): Router {
         const error = validateSearchQuery(q);
         if (error) throw new AppError(400, 'VALIDATION_ERROR', error);
 
-        const result = await chainService.search(q!);
+        const chainId = parseChainId(req);
+        const result = await chainService.search(q!, chainId);
         res.json(result);
       } catch (err) {
         next(err);

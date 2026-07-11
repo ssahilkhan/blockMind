@@ -4,6 +4,7 @@ import { useQuery } from "@tanstack/react-query";
 import { healthApi, chainApi } from "@/services";
 import { useAppStore } from "@/stores/app-store";
 import { useEffect } from "react";
+import { useChainContext } from "@/features/multi-chain";
 
 export function useHealthPolling(intervalMs = 30_000) {
   const setBackendHealth = useAppStore((s) => s.setBackendHealth);
@@ -29,9 +30,10 @@ export function useHealthPolling(intervalMs = 30_000) {
 
 export function useNetworkStatus() {
   const setCurrentNetwork = useAppStore((s) => s.setCurrentNetwork);
+  const { currentChainId } = useChainContext();
 
   const query = useQuery({
-    queryKey: ["chain", "network"],
+    queryKey: ["chain", "network", currentChainId],
     queryFn: () => chainApi.getNetwork(),
     staleTime: 60_000,
   });
