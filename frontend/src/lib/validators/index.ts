@@ -26,3 +26,21 @@ export type {
   SignMessageInput,
   VerifySignatureInput,
 } from "./wallet";
+export {
+  compileSchema,
+  deploySchema,
+  interactSchema,
+  readFunctionSchema,
+  writeFunctionSchema,
+  encodeSchema,
+  decodeSchema,
+  eventDecodeSchema,
+  type CompileInput,
+  type DeployInput,
+  type InteractInput,
+  type ReadFunctionInput,
+  type WriteFunctionInput,
+  type EncodeInput,
+  type DecodeInput,
+  type EventDecodeInput,
+} from "./contract";
