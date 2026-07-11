@@ -15,6 +15,7 @@ import {
   ChevronLeft,
   Send,
   Brain,
+  ShieldCheck,
 } from "lucide-react";
 import type { LucideIcon } from "lucide-react";
 import { cn } from "@/lib/utils";
@@ -43,6 +44,7 @@ const NAV_ITEMS: NavItemData[] = [
   { label: "Events", href: "/events", icon: Activity },
   { label: "Portfolio", href: "/portfolio", icon: PieChart },
   { label: "AI Assistant", href: "/ai", icon: Brain },
+  { label: "Security", href: "/security", icon: ShieldCheck },
 ];
 
 const BOTTOM_ITEMS: NavItemData[] = [
