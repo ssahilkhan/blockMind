@@ -1,4 +1,8 @@
 export {
+  searchSchema,
+  type SearchInput,
+} from "./explorer";
+export {
   importPrivateKeySchema,
   importMnemonicSchema,
   lookupAddressSchema,
