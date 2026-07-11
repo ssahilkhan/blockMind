@@ -14,6 +14,7 @@ import {
   Settings,
   ChevronLeft,
   Send,
+  Brain,
 } from "lucide-react";
 import type { LucideIcon } from "lucide-react";
 import { cn } from "@/lib/utils";
@@ -41,6 +42,7 @@ const NAV_ITEMS: NavItemData[] = [
   { label: "Tokens", href: "/tokens", icon: Coins },
   { label: "Events", href: "/events", icon: Activity },
   { label: "Portfolio", href: "/portfolio", icon: PieChart },
+  { label: "AI Assistant", href: "/ai", icon: Brain },
 ];
 
 const BOTTOM_ITEMS: NavItemData[] = [
