@@ -13,6 +13,7 @@ import {
   PieChart,
   Settings,
   ChevronLeft,
+  Send,
 } from "lucide-react";
 import type { LucideIcon } from "lucide-react";
 import { cn } from "@/lib/utils";
@@ -35,6 +36,7 @@ const NAV_ITEMS: NavItemData[] = [
   { label: "Wallets", href: "/wallets", icon: Wallet },
   { label: "Blocks", href: "/blocks", icon: Box },
   { label: "Transactions", href: "/transactions", icon: ArrowRightLeft },
+  { label: "Studio", href: "/studio", icon: Send },
   { label: "Contracts", href: "/contracts", icon: FileCode2 },
   { label: "Tokens", href: "/tokens", icon: Coins },
   { label: "Events", href: "/events", icon: Activity },

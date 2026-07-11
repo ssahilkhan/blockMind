@@ -3,6 +3,14 @@ export {
   type SearchInput,
 } from "./explorer";
 export {
+  buildTransactionSchema,
+  estimateGasSchema,
+  trackTxSchema,
+  type BuildTransactionInput,
+  type EstimateGasInput,
+  type TrackTxInput,
+} from "./transaction";
+export {
   importPrivateKeySchema,
   importMnemonicSchema,
   lookupAddressSchema,
