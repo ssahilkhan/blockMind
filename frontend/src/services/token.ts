@@ -51,4 +51,43 @@ export const tokenApi = {
     apiClient<{ name: string; description: string; image: string }>(
       `/token/${address}/token/${tokenId}`,
     ),
+
+  allowance: (params: {
+    tokenAddress: string;
+    owner: string;
+    spender: string;
+    standard?: string;
+  }) =>
+    apiClient<{ allowance: string }>("/token/allowance", {
+      method: "POST",
+      body: JSON.stringify(params),
+    }),
+
+  getApproved: (params: { tokenAddress: string; tokenId: string }) =>
+    apiClient<{ approved: string }>("/token/get-approved", {
+      method: "POST",
+      body: JSON.stringify(params),
+    }),
+
+  isApprovedForAll: (params: {
+    tokenAddress: string;
+    owner: string;
+    operator: string;
+  }) =>
+    apiClient<{ approved: boolean }>("/token/is-approved-for-all", {
+      method: "POST",
+      body: JSON.stringify(params),
+    }),
+
+  setApprovalForAll: (params: {
+    tokenAddress: string;
+    privateKey: string;
+    operator: string;
+    approved: boolean;
+    standard?: string;
+  }) =>
+    apiClient<{ transactionHash: string }>("/token/set-approval-for-all", {
+      method: "POST",
+      body: JSON.stringify(params),
+    }),
 };
