@@ -58,3 +58,11 @@ export {
   type AllowanceInput,
   type NftLookupInput,
 } from "./token";
+export {
+  eventSearchSchema,
+  blockRangeSchema,
+  txHashSearchSchema,
+  type EventSearchInput,
+  type BlockRangeInput,
+  type TxHashSearchInput,
+} from "./events";
