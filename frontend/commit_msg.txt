@@ -1,8 +1,0 @@
-Module 17: Security %26 Risk Intelligence Center  
-  
-- Wallet, contract, transaction, and token risk analyzers with scoring  
-- SecurityDashboard orchestrator with analysis type selector  
-- RiskScoreCard, WalletRiskCard, ContractRiskCard, TransactionRiskCard  
-- RecommendationPanel and SecurityTimeline  
-- /security page added to sidebar  
-- 286 tests passing, build clean with 15 routes  
